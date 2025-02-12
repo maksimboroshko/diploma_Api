@@ -14,9 +14,10 @@ public class TestBase {
 
     public static RequestSpecification requestSpec = RestAssured.given()
             .log().all()
-            .filter(new AllureRestAssured());
+            .filter(new AllureRestAssured())
+            .contentType("application/json");;
 
     public static ResponseSpecification responseSpec = RestAssured.expect()
-            .log().all();
+            .log().all()
+            .statusCode(200);;
 }
-

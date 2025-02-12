@@ -45,6 +45,10 @@ dependencies {
             'org.projectlombok:lombok:1.18.22',
            'io.rest-assured:rest-assured:5.4.0',
                     'org.hamcrest:hamcrest:2.2',
+          'org.projectlombok:lombok:1.18.24',
+            'org.projectlombok:lombok:1.18.24',
+                  'org.projectlombok:lombok:1.18.24',
+                     'org.projectlombok:lombok:1.18.24',
                      'org.junit.jupiter:junit-jupiter:5.9.3'
     )
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
