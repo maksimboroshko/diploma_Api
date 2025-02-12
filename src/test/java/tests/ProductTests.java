@@ -51,7 +51,7 @@ public class ProductTests extends TestBase {
 
     @Test
     public void createProductTest() {
-        // Создание объекта запроса (ProductRequest)
+
         ProductRequest newProduct = new ProductRequest();
         newProduct.setTitle("Test Product");
         newProduct.setDescription("This is a test product");
@@ -61,13 +61,11 @@ public class ProductTests extends TestBase {
 
         // Отправка POST-запроса для создания нового продукта
         Response response = given()
-                .spec(requestSpec) // используем вашу спецификацию запроса
+                .spec(requestSpec)
                 .contentType("application/json")
-                .body(newProduct) // передаем объект продукта в теле запроса
+                .body(newProduct)
                 .when()
                 .post("/products");
-
-        // Логирование полного ответа
         System.out.println("Response body: " + response.getBody().asString());
 
         // Получаем цену из ответа как число (Double) для точности
@@ -75,7 +73,7 @@ public class ProductTests extends TestBase {
 
         // Сравниваем как Double с Double
         response.then()
-                .statusCode(200) // Статус 200 фэйлит тест
+                .statusCode(200) // Статус 201 фэйлит тест , можно как негативный добавить позже
                 .body("title", equalTo(newProduct.getTitle()))
                 .body("description", equalTo(newProduct.getDescription()))
                 .body("price", equalTo(newProduct.getPrice().doubleValue())) // Сравнение как Double
