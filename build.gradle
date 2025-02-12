@@ -42,7 +42,10 @@ dependencies {
             "com.github.javafaker:javafaker:1.0.2",
             "org.assertj:assertj-core:3.24.2",
             'org.aeonbits.owner:owner:1.0.12',
-            'org.projectlombok:lombok:1.18.22'
+            'org.projectlombok:lombok:1.18.22',
+           'io.rest-assured:rest-assured:5.4.0',
+                    'org.hamcrest:hamcrest:2.2',
+                     'org.junit.jupiter:junit-jupiter:5.9.3'
     )
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }

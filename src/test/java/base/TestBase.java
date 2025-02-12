@@ -1,10 +1,9 @@
 package base;
-
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
-import io.restassured.filter.log.LogDetail;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
-import listners.AllureListener;
+
 
 
 public class TestBase {
@@ -14,8 +13,8 @@ public class TestBase {
     }
 
     public static RequestSpecification requestSpec = RestAssured.given()
-            .log().all() // Убрали LogDetail.ALL
-            .filter(new AllureListener());
+            .log().all()
+            .filter(new AllureRestAssured());
 
     public static ResponseSpecification responseSpec = RestAssured.expect()
             .log().all();
