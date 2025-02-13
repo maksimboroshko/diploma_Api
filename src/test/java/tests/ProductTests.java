@@ -1,18 +1,13 @@
 package tests;
-import io.restassured.response.Response;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.junit.jupiter.api.Test;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.notNullValue;
+
+import base.TestBase;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
-import base.TestBase;
+import io.restassured.response.Response;
 import models.ProductRequest;
-import org.hamcrest.Matchers;
-import java.math.BigDecimal;
+import org.junit.jupiter.api.Test;
 
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 @Feature("API Тесты для продуктов")
@@ -29,8 +24,7 @@ public class ProductTests extends TestBase {
                 .statusCode(200);
     }
 
-    // Тест на проверку получения списка продуктов (GET /products)
-    // Тест на проверку получения списка продуктов (GET /products)
+
     @Test
     public void getProductsTest() {
         Response response = given()
@@ -38,7 +32,6 @@ public class ProductTests extends TestBase {
                 .when()
                 .get("/products");
 
-        // Логирование всего тела ответа
         System.out.println("Full response body: " + response.getBody().asString());
 
         response.then()
@@ -68,9 +61,6 @@ public class ProductTests extends TestBase {
                 .post("/products");
         System.out.println("Response body: " + response.getBody().asString());
 
-
-
-        // Сравниваем как Double с Double
         response.then()
                 .statusCode(200) // Статус 201 фэйлит тест , можно как негативный добавить позже
                 .body("title", equalTo(newProduct.getTitle()))
@@ -89,4 +79,93 @@ public class ProductTests extends TestBase {
         response.then()
                 .body("id", greaterThan(0));
     }
+
+
+    @Test
+    public void updateProductTest() {
+        // Создаем новый товар
+        ProductRequest newProduct = new ProductRequest();
+        newProduct.setTitle("Test Product");
+        newProduct.setDescription("Initial description");
+        newProduct.setPrice(99);
+        newProduct.setCategory("electronics");
+        newProduct.setImage("https://example.com/test-product.jpg");
+
+        Response createResponse = given()
+                .spec(requestSpec)
+                .contentType("application/json")
+                .body(newProduct)
+                .when()
+                .post("/products");
+
+        int productId = createResponse.jsonPath().getInt("id");
+
+        // Логируем созданный продукт
+        System.out.println("Created product ID: " + productId);
+
+        // Обновляем данные товара
+        ProductRequest updatedProduct = new ProductRequest();
+        updatedProduct.setTitle("Updated Product");
+        updatedProduct.setDescription("Updated description");
+        updatedProduct.setPrice(999);
+        updatedProduct.setCategory("gadgets");
+        updatedProduct.setImage("https://example.com/updated-product.jpg");
+
+        Response updateResponse = given()
+                .spec(requestSpec)
+                .contentType("application/json")
+                .body(updatedProduct)
+                .when()
+                .put("/products/" + productId);
+
+        // Логируем обновленный продукт
+        System.out.println("Updated product response: " + updateResponse.getBody().asString());
+
+        // Проверяем, что товар обновился корректно
+        updateResponse.then()
+                .statusCode(200)
+                .body("id", equalTo(productId))
+                .body("title", equalTo(updatedProduct.getTitle()))
+                .body("description", equalTo(updatedProduct.getDescription()))
+                .body("price", equalTo(updatedProduct.getPrice().intValue())) // убираем дробную часть для сравнения
+                .body("category", equalTo(updatedProduct.getCategory()))
+                .body("image", equalTo(updatedProduct.getImage()));
+    }
+
+    @Test
+    public void createAndDeleteProductTest() {
+        ProductRequest newProduct = new ProductRequest();
+        newProduct.setTitle("Test Product");
+        newProduct.setDescription("This is a test product");
+        newProduct.setPrice(123);
+        newProduct.setCategory("electronics");
+        newProduct.setImage("https://example.com/test-product.jpg");
+
+        // Отправка POST-запроса для создания нового продукта
+        Response response = given()
+                .spec(requestSpec)
+                .contentType("application/json")
+                .body(newProduct)
+                .when()
+                .post("/products")
+                .then()
+                .statusCode(200) // Проверяем успешное создание
+                .extract().response();
+
+        System.out.println("Response body: " + response.getBody().asString());
+
+        int productId = response.jsonPath().getInt("id");
+        System.out.println("Создан товар с ID: " + productId);
+
+        // Удаляем товар
+        given()
+                .spec(requestSpec)
+                .when()
+                .delete("/products/" + productId)
+                .then()
+                .statusCode(200);
+
+        System.out.println("Товар с ID " + productId + " успешно удалён.");
+    }
 }
+
