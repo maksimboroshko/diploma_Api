@@ -55,7 +55,7 @@ public class ProductTests extends TestBase {
         ProductRequest newProduct = new ProductRequest();
         newProduct.setTitle("Test Product");
         newProduct.setDescription("This is a test product");
-        newProduct.setPrice(new BigDecimal("123.0"));
+        newProduct.setPrice(123);
         newProduct.setCategory("electronics");
         newProduct.setImage("https://example.com/test-product.jpg");
 
@@ -68,15 +68,14 @@ public class ProductTests extends TestBase {
                 .post("/products");
         System.out.println("Response body: " + response.getBody().asString());
 
-        // Получаем цену из ответа как число (Double) для точности
-        Double priceFromResponse = response.jsonPath().getDouble("price");
+
 
         // Сравниваем как Double с Double
         response.then()
                 .statusCode(200) // Статус 201 фэйлит тест , можно как негативный добавить позже
                 .body("title", equalTo(newProduct.getTitle()))
                 .body("description", equalTo(newProduct.getDescription()))
-                .body("price", equalTo(newProduct.getPrice().doubleValue())) // Сравнение как Double
+                .body("price", equalTo(newProduct.getPrice()))
                 .body("category", equalTo(newProduct.getCategory()))
                 .body("image", equalTo(newProduct.getImage()));
 
