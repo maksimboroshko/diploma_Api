@@ -7,7 +7,11 @@ import io.restassured.response.Response;
 import models.ProductRequest;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.Map;
+
 import static io.restassured.RestAssured.given;
+import static org.asynchttpclient.util.Assertions.assertNotNull;
 import static org.hamcrest.Matchers.*;
 
 @Feature("API Тесты для продуктов")
@@ -166,6 +170,38 @@ public class ProductTests extends TestBase {
                 .statusCode(200);
 
         System.out.println("Товар с ID " + productId + " успешно удалён.");
+    }
+
+    @Test
+    public void filterProductsByCategoryTest() {
+
+        String category = "electronics";
+
+        // Отправка GET-запроса для получения товаров по категории
+        Response response = given()
+                .spec(requestSpec)
+                .when()
+                .get("/products/category/" + category);
+        System.out.println("Response body: " + response.getBody().asString());
+
+        response.then()
+                .statusCode(200) // Статус 200 OK
+                .contentType("application/json") // Проверка, что ответ в формате JSON
+                .body("$", hasSize(greaterThan(0))) // Проверка, что товары присутствуют в ответе
+                .body("every { it.category == '" + category + "' }", is(true)); // Проверка, что каждый товар относится к категории "electronics"
+
+        List<Map<String, Object>> products = response.jsonPath().getList("$"); // Получаем список товаров
+
+// Проверяем каждый товар в списке
+        products.forEach(item -> {
+            assertNotNull(item.get("id"), "Product ID should not be null");
+            assertNotNull(item.get("title"), "Product title should not be null");
+            assertNotNull(item.get("price"), "Product price should not be null");
+            assertNotNull(item.get("category"), "Product category should not be null");
+            assertNotNull(item.get("image"), "Product image should not be null");
+        });
+
+
     }
 }
 
