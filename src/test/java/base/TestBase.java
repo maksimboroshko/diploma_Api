@@ -1,12 +1,12 @@
 package base;
+
 import com.codeborne.selenide.Selenide;
-import helpers.Attach;
+import com.codeborne.selenide.WebDriverRunner;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.junit.jupiter.api.AfterEach;
-
 
 public class TestBase {
 
@@ -18,21 +18,11 @@ public class TestBase {
             .log().all()
             .filter(new AllureRestAssured())
             .contentType("application/json");
-    ;
 
     public static ResponseSpecification responseSpec = RestAssured.expect()
             .log().all()
             .statusCode(200);
 
 
-    @AfterEach
-    void addAttachments() {
-        Attach.screenshotAs("Last screenshot");
-        Attach.pageSource();
-        Attach.browserConsoleLogs();
-        Attach.addVideo();
-        Selenide.closeWebDriver();
+        }
 
-
-    }
-}
