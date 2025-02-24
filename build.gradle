@@ -2,15 +2,20 @@ plugins {
     id 'java'
     id 'io.qameta.allure' version '2.12.0'
 }
+
+group = 'ru.ksandrasky'
+version = '1.0-SNAPSHOT'
+
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-
-
-group = 'ru.ksandrasky'
-version = '1.0-SNAPSHOT'
+def selenideVersion = "6.19.1"
+def restAssuredVersion = "5.4.0"
+def allureVersion = "2.29.0"
+def slf4jVersion = "2.0.7"
+def lombokVersion = "1.18.24"
 
 allure {
     report {
@@ -31,22 +36,22 @@ repositories {
 }
 
 dependencies {
-    testImplementation(
-            "com.codeborne:selenide:6.19.1",
-            "org.junit.jupiter:junit-jupiter:5.10.0",
-            "org.slf4j:slf4j-simple:2.0.7",
-            "io.qameta.allure:allure-selenide:2.29.0",
-            "org.aeonbits.owner:owner:1.0.12",
-            "org.projectlombok:lombok:1.18.24",
-            "io.rest-assured:rest-assured:5.4.0",
-            "io.rest-assured:json-schema-validator:5.4.0",
-            "io.qameta.allure:allure-rest-assured:2.29.0",
-            "com.github.javafaker:javafaker:1.0.2",
-            "org.assertj:assertj-core:3.24.2",
-            "org.hamcrest:hamcrest:2.2",
-             "org.projectlombok:lombok:1.18.24",
-            "org.projectlombok:lombok:1.18.24"
-    )
+    // Lombok для тестовых классов
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    // Основные библиотеки для тестирования
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.0"
+    testImplementation "com.codeborne:selenide:$selenideVersion"
+    testImplementation "io.rest-assured:rest-assured:$restAssuredVersion"
+    testImplementation "io.rest-assured:json-schema-validator:$restAssuredVersion"
+    testImplementation "io.qameta.allure:allure-selenide:$allureVersion"
+    testImplementation "io.qameta.allure:allure-rest-assured:$allureVersion"
+    testImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
+    testImplementation "org.aeonbits.owner:owner:1.0.12"
+    testImplementation "com.github.javafaker:javafaker:1.0.2"
+    testImplementation "org.assertj:assertj-core:3.24.2"
+    testImplementation "org.hamcrest:hamcrest:2.2"
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -69,4 +74,3 @@ task jenkins_tests(type: Test) {
         includeTags("Test")
     }
 }
-
