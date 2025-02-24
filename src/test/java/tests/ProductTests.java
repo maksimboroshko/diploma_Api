@@ -56,7 +56,7 @@ public class ProductTests extends TestBase {
         newProduct.setCategory("electronics");
         newProduct.setImage("https://example.com/test-product.jpg");
 
-        // Отправка POST-запроса для создания нового продукта
+
         Response response = given()
                 .spec(requestSpec)
                 .contentType("application/json")
@@ -73,13 +73,13 @@ public class ProductTests extends TestBase {
                 .body("category", equalTo(newProduct.getCategory()))
                 .body("image", equalTo(newProduct.getImage()));
 
-        // Получение ID нового продукта из ответа и проверка
+
         int productId = response.jsonPath().getInt("id");
 
         // Логирование ID продукта
         System.out.println("New product ID: " + productId);
 
-        // Дополнительная проверка, что ID был возвращен
+
         response.then()
                 .body("id", greaterThan(0));
     }
@@ -87,7 +87,7 @@ public class ProductTests extends TestBase {
 
     @Test
     public void updateProductTest() {
-        // Создаем новый товар
+
         ProductRequest newProduct = new ProductRequest();
         newProduct.setTitle("Test Product");
         newProduct.setDescription("Initial description");
@@ -104,10 +104,10 @@ public class ProductTests extends TestBase {
 
         int productId = createResponse.jsonPath().getInt("id");
 
-        // Логируем созданный продукт
+
         System.out.println("Created product ID: " + productId);
 
-        // Обновляем данные товара
+
         ProductRequest updatedProduct = new ProductRequest();
         updatedProduct.setTitle("Updated Product");
         updatedProduct.setDescription("Updated description");
@@ -122,10 +122,10 @@ public class ProductTests extends TestBase {
                 .when()
                 .put("/products/" + productId);
 
-        // Логируем обновленный продукт
+
         System.out.println("Updated product response: " + updateResponse.getBody().asString());
 
-        // Проверяем, что товар обновился корректно
+
         updateResponse.then()
                 .statusCode(200)
                 .body("id", equalTo(productId))
@@ -145,7 +145,7 @@ public class ProductTests extends TestBase {
         newProduct.setCategory("electronics");
         newProduct.setImage("https://example.com/test-product.jpg");
 
-        // Отправка POST-запроса для создания нового продукта
+
         Response response = given()
                 .spec(requestSpec)
                 .contentType("application/json")
@@ -153,7 +153,7 @@ public class ProductTests extends TestBase {
                 .when()
                 .post("/products")
                 .then()
-                .statusCode(200) // Проверяем успешное создание
+                .statusCode(200)
                 .extract().response();
 
         System.out.println("Response body: " + response.getBody().asString());
@@ -177,7 +177,7 @@ public class ProductTests extends TestBase {
 
         String category = "electronics";
 
-        // Отправка GET-запроса для получения товаров по категории
+
         Response response = given()
                 .spec(requestSpec)
                 .when()
@@ -185,14 +185,13 @@ public class ProductTests extends TestBase {
         System.out.println("Response body: " + response.getBody().asString());
 
         response.then()
-                .statusCode(200) // Статус 200 OK
-                .contentType("application/json") // Проверка, что ответ в формате JSON
-                .body("$", hasSize(greaterThan(0))) // Проверка, что товары присутствуют в ответе
-                .body("every { it.category == '" + category + "' }", is(true)); // Проверка, что каждый товар относится к категории "electronics"
+                .statusCode(200)
+                .contentType("application/json")
+                .body("$", hasSize(greaterThan(0)))
+                .body("every { it.category == '" + category + "' }", is(true));
 
-        List<Map<String, Object>> products = response.jsonPath().getList("$"); // Получаем список товаров
+        List<Map<String, Object>> products = response.jsonPath().getList("$");
 
-// Проверяем каждый товар в списке
         products.forEach(item -> {
             assertNotNull(item.get("id"), "Product ID should not be null");
             assertNotNull(item.get("title"), "Product title should not be null");
