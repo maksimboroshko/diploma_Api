@@ -57,4 +57,4 @@
 
 Для локального запуска тестов:
 ```bash
-gradle test
+gradle jenkins_test
